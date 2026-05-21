@@ -33,7 +33,7 @@ export default function TacticalHUD({ activeModule, setActiveModule }) {
   };
 
   return (
-    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-[120]">
+    <div className="fixed bottom-0 left-0 w-full z-[120] pb-[env(safe-area-inset-bottom,16px)]">
       {/* Network Telemetry Indicator */}
       <div className={`absolute top-[-26px] right-3 text-[0.55rem] tracking-widest font-mono border px-2 py-0.5 rounded-sm bg-zinc-950/90 backdrop-blur whitespace-nowrap shadow-[0_2px_10px_rgba(0,0,0,0.5)] ${
         isOnline 
@@ -43,7 +43,7 @@ export default function TacticalHUD({ activeModule, setActiveModule }) {
         {isOnline ? '[ 📡 ONLINE ]' : '[ 💾 LOCAL SHELL ]'}
       </div>
 
-      <div className="flex items-center gap-1 bg-zinc-950/80 backdrop-blur-xl border border-zinc-850 px-3 py-1.5 rounded-full shadow-[0_12px_40px_rgba(0,0,0,0.7)] hover:border-zinc-700/40 transition-all duration-300">
+      <div className="w-full flex justify-around items-center bg-zinc-950/80 backdrop-blur-xl border-t border-zinc-850 px-3 py-2 shadow-[0_-12px_40px_rgba(0,0,0,0.7)] transition-all duration-300">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = activeModule === item.id;

@@ -19,9 +19,9 @@ function App() {
   }, [activeLocation]);
 
   return (
-    <div className="h-screen w-screen overflow-hidden bg-zinc-950 text-slate-50 flex flex-col scanlines">
+    <div className="min-h-screen w-full overflow-hidden bg-zinc-950 text-slate-50 flex flex-col scanlines">
       {/* Top Header Bar */}
-      <header className="bg-zinc-950 border-b border-zinc-900/80 px-4 py-2 flex items-center justify-between z-50 shrink-0 font-mono">
+      <header className="w-[95%] max-w-[500px] mx-auto bg-zinc-950 border-b border-zinc-900/80 px-4 pb-2 pt-[calc(env(safe-area-inset-top,0px)+12px)] flex items-center justify-between z-50 shrink-0 font-mono">
         <div className="flex items-center gap-3">
           <div className="relative w-5 h-5 flex items-center justify-center">
             <span className="absolute inset-0 rounded-full border border-emerald-500/20 animate-ping" />

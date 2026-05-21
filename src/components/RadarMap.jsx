@@ -247,13 +247,13 @@ export default function RadarMap({ activeLocation, squallAlert }) {
   }, [squallAlert]);
 
   return (
-    <div className="relative w-full h-full">
+    <div className="relative w-full h-full z-[0]">
       <div ref={mapContainer} className="w-full h-full" />
       
       {/* Tactical UI Toggle */}
       <button
         onClick={() => setIsRadarActive(!isRadarActive)}
-        className={`absolute bottom-6 right-6 z-40 p-3 bg-zinc-900/90 backdrop-blur-md border ${
+        className={`absolute bottom-[calc(env(safe-area-inset-bottom,16px)+4.5rem)] right-6 z-40 p-3 bg-zinc-900/90 backdrop-blur-md border ${
           isRadarActive ? 'border-emerald-500' : 'border-zinc-800'
         } rounded-md transition-colors duration-300 focus:outline-none flex items-center justify-center`}
         aria-label="Toggle Radar"

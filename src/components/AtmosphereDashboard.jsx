@@ -211,7 +211,7 @@ export default function AtmosphereDashboard({ activeLocation, squallAlert, setSq
         </div>
 
         {/* Right Side: Metrics Grid (Col span 3) */}
-        <div className="col-span-3 grid grid-cols-1 gap-1.5 content-center z-10 min-w-[185px] md:min-w-[260px]">
+        <div className="col-span-3 flex flex-wrap justify-between gap-2 z-10">
           {/* Temperature */}
           <div className={`flex items-center justify-between ${isSquall ? 'bg-red-950/30 border-red-900/50' : 'bg-zinc-950/60 border-zinc-850 hover:border-zinc-700/50'} px-2 py-1 border rounded-sm transition-colors duration-200`}>
             <div className="flex items-center gap-1">
