@@ -106,8 +106,9 @@ export default function AtmosphereDashboard({ activeLocation, squallAlert, setSq
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 10 }}
         transition={{ duration: 0.3 }}
-        className={containerClasses}
+        className="flex flex-col w-full flex-grow relative"
       >
+        <div className={containerClasses}>
         {/* Subtle CRT Noise overlay using radial gradient for glassmorphism */}
         <div className={`absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] ${isSquall ? 'from-transparent via-red-950/30 to-red-950/80' : 'from-transparent via-zinc-950/20 to-zinc-950/80'} z-0`}></div>
 
@@ -209,6 +210,7 @@ export default function AtmosphereDashboard({ activeLocation, squallAlert, setSq
               </motion.div>
             </div>
           )}
+        </div>
         </div>
         
         {/* Telemetry Toggle */}

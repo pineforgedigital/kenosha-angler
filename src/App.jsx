@@ -41,7 +41,7 @@ function App() {
       </header>
 
       <div className="flex-grow flex flex-col overflow-hidden relative">
-        <div className="bg-zinc-900 border-b border-zinc-800 flex flex-col relative shrink-0 max-h-[40vh] md:max-h-none overflow-y-auto no-scrollbar scrollbar-hide">
+        <div className="bg-zinc-900 border-b border-zinc-800 flex flex-col relative shrink-0">
           <SearchPanel activeLocation={activeLocation} setActiveLocation={setActiveLocation} />
           <AtmosphereDashboard activeLocation={activeLocation} squallAlert={squallAlert} setSquallAlert={setSquallAlert} />
         </div>
