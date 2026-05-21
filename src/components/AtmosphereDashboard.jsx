@@ -94,8 +94,8 @@ export default function AtmosphereDashboard({ activeLocation, squallAlert, setSq
   // Tactical UI Override for Squall Mode
   const isSquall = squallAlert !== null;
   const containerClasses = isSquall
-    ? "flex-grow bg-red-950/80 backdrop-blur-xl border-t border-red-800/60 p-4 flex flex-col md:flex-row gap-4 overflow-hidden relative glow-red"
-    : "flex-grow bg-zinc-950/50 backdrop-blur-xl border-t border-zinc-850 p-4 flex flex-col md:flex-row gap-4 overflow-hidden relative";
+    ? "flex-grow bg-red-950/80 backdrop-blur-xl border-t border-red-800/60 px-4 py-2 md:p-4 flex flex-col md:flex-row gap-4 overflow-hidden relative glow-red"
+    : "flex-grow bg-zinc-950/50 backdrop-blur-xl border-t border-zinc-850 px-4 py-2 md:p-4 flex flex-col md:flex-row gap-4 overflow-hidden relative";
 
   return (
     <AnimatePresence mode="wait">
@@ -211,41 +211,41 @@ export default function AtmosphereDashboard({ activeLocation, squallAlert, setSq
         </div>
 
         {/* Right Side: Metrics Grid */}
-        <div className="w-full md:w-3/12 grid grid-cols-2 md:grid-cols-1 gap-2 z-10">
+        <div className="w-full md:w-3/12 grid grid-cols-2 grid-rows-2 md:grid-cols-1 md:grid-rows-none gap-2 z-10">
           {/* Temperature */}
-          <div className={`flex items-center justify-between ${isSquall ? 'bg-red-950/30 border-red-900/50' : 'bg-zinc-950/60 border-zinc-850 hover:border-zinc-700/50'} px-2 py-1 border rounded-sm transition-colors duration-200`}>
-            <div className="flex items-center gap-1">
+          <div className={`flex flex-col md:flex-row items-center justify-center md:justify-between ${isSquall ? 'bg-red-950/30 border-red-900/50' : 'bg-zinc-950/60 border-zinc-850 hover:border-zinc-700/50'} h-12 md:h-auto px-2 py-1 border rounded-sm transition-colors duration-200`}>
+            <div className="flex items-center gap-1 mb-0.5 md:mb-0">
               <Thermometer size={11} className={isSquall ? 'text-red-400' : 'text-zinc-500'} />
-              <span className="text-zinc-550 font-mono text-[0.52rem] tracking-tighter uppercase font-semibold">TEMPERATURE</span>
+              <span className="text-zinc-550 font-mono text-[9px] md:text-[0.52rem] tracking-tighter uppercase font-semibold">TEMP</span>
             </div>
-            <span className="text-slate-200 font-mono text-[0.65rem] font-bold">{Math.round(weather.main.temp)}°F</span>
+            <span className="text-slate-200 font-mono text-[10px] md:text-[0.65rem] font-bold">{Math.round(weather.main.temp)}°F</span>
           </div>
           
           {/* Wind Velocity */}
-          <div className={`flex items-center justify-between ${isSquall ? 'bg-red-950/30 border-red-900/50' : 'bg-zinc-950/60 border-zinc-850 hover:border-zinc-700/50'} px-2 py-1 border rounded-sm transition-colors duration-200`}>
-            <div className="flex items-center gap-1">
+          <div className={`flex flex-col md:flex-row items-center justify-center md:justify-between ${isSquall ? 'bg-red-950/30 border-red-900/50' : 'bg-zinc-950/60 border-zinc-850 hover:border-zinc-700/50'} h-12 md:h-auto px-2 py-1 border rounded-sm transition-colors duration-200`}>
+            <div className="flex items-center gap-1 mb-0.5 md:mb-0">
               <Wind size={11} className={isSquall ? 'text-red-400' : 'text-zinc-500'} />
-              <span className="text-zinc-550 font-mono text-[0.52rem] tracking-tighter uppercase font-semibold">WIND VELOCITY</span>
+              <span className="text-zinc-550 font-mono text-[9px] md:text-[0.52rem] tracking-tighter uppercase font-semibold">WIND</span>
             </div>
-            <span className="text-slate-200 font-mono text-[0.65rem] font-bold">{Math.round(weather.wind.speed)} MPH</span>
+            <span className="text-slate-200 font-mono text-[10px] md:text-[0.65rem] font-bold">{Math.round(weather.wind.speed)} MPH</span>
           </div>
 
           {/* Barometer */}
-          <div className={`flex items-center justify-between ${isSquall ? 'bg-red-950/30 border-red-900/50' : 'bg-zinc-950/60 border-zinc-850 hover:border-zinc-700/50'} px-2 py-1 border rounded-sm transition-colors duration-200`}>
-            <div className="flex items-center gap-1">
+          <div className={`flex flex-col md:flex-row items-center justify-center md:justify-between ${isSquall ? 'bg-red-950/30 border-red-900/50' : 'bg-zinc-950/60 border-zinc-850 hover:border-zinc-700/50'} h-12 md:h-auto px-2 py-1 border rounded-sm transition-colors duration-200`}>
+            <div className="flex items-center gap-1 mb-0.5 md:mb-0">
               <Gauge size={11} className={isSquall ? 'text-red-400' : 'text-zinc-500'} />
-              <span className="text-zinc-550 font-mono text-[0.52rem] tracking-tighter uppercase font-semibold">BAROMETER</span>
+              <span className="text-zinc-550 font-mono text-[9px] md:text-[0.52rem] tracking-tighter uppercase font-semibold">BARO</span>
             </div>
-            <span className="text-slate-200 font-mono text-[0.65rem] font-bold">{pressureInHg} IN</span>
+            <span className="text-slate-200 font-mono text-[10px] md:text-[0.65rem] font-bold">{pressureInHg} IN</span>
           </div>
 
           {/* Cloud Cover */}
-          <div className={`flex items-center justify-between ${isSquall ? 'bg-red-950/30 border-red-900/50' : 'bg-zinc-950/60 border-zinc-850 hover:border-zinc-700/50'} px-2 py-1 border rounded-sm transition-colors duration-200`}>
-            <div className="flex items-center gap-1">
+          <div className={`flex flex-col md:flex-row items-center justify-center md:justify-between ${isSquall ? 'bg-red-950/30 border-red-900/50' : 'bg-zinc-950/60 border-zinc-850 hover:border-zinc-700/50'} h-12 md:h-auto px-2 py-1 border rounded-sm transition-colors duration-200`}>
+            <div className="flex items-center gap-1 mb-0.5 md:mb-0">
               <Cloud size={11} className={isSquall ? 'text-red-400' : 'text-zinc-500'} />
-              <span className="text-zinc-550 font-mono text-[0.52rem] tracking-tighter uppercase font-semibold">CLOUD COVER</span>
+              <span className="text-zinc-550 font-mono text-[9px] md:text-[0.52rem] tracking-tighter uppercase font-semibold">CLOUDS</span>
             </div>
-            <span className="text-slate-200 font-mono text-[0.65rem] font-bold">{weather.clouds.all}%</span>
+            <span className="text-slate-200 font-mono text-[10px] md:text-[0.65rem] font-bold">{weather.clouds.all}%</span>
           </div>
         </div>
       </motion.div>
