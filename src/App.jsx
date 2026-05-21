@@ -41,11 +41,11 @@ function App() {
       </header>
 
       <div className="flex-grow flex flex-col overflow-hidden relative">
-        <div className="bg-zinc-900 border-b border-zinc-800 flex flex-col relative shrink-0">
+        <div className="bg-zinc-900 border-b border-zinc-800 flex flex-col relative shrink-0 max-h-[45vh] md:max-h-none overflow-y-auto">
           <SearchPanel activeLocation={activeLocation} setActiveLocation={setActiveLocation} />
           <AtmosphereDashboard activeLocation={activeLocation} squallAlert={squallAlert} setSquallAlert={setSquallAlert} />
         </div>
-        <div className="flex-1 relative">
+        <div className="flex-1 relative min-h-0">
           {squallAlert && (
             <div className="absolute top-0 left-0 right-0 bg-red-600 text-white font-mono text-[0.65rem] py-2 px-4 flex items-center justify-center gap-2 animate-pulse z-[90] font-black uppercase tracking-widest shadow-[0_4px_20px_rgba(220,38,38,0.4)] border-b border-red-800">
               <AlertTriangle size={13} className="shrink-0" />

@@ -94,8 +94,8 @@ export default function AtmosphereDashboard({ activeLocation, squallAlert, setSq
   // Tactical UI Override for Squall Mode
   const isSquall = squallAlert !== null;
   const containerClasses = isSquall
-    ? "flex-grow bg-red-950/80 backdrop-blur-xl border-t border-red-800/60 p-4 grid grid-cols-12 gap-4 overflow-hidden relative glow-red"
-    : "flex-grow bg-zinc-950/50 backdrop-blur-xl border-t border-zinc-850 p-4 grid grid-cols-12 gap-4 overflow-hidden relative";
+    ? "flex-grow bg-red-950/80 backdrop-blur-xl border-t border-red-800/60 p-4 flex flex-col md:flex-row gap-4 overflow-hidden relative glow-red"
+    : "flex-grow bg-zinc-950/50 backdrop-blur-xl border-t border-zinc-850 p-4 flex flex-col md:flex-row gap-4 overflow-hidden relative";
 
   return (
     <AnimatePresence mode="wait">
@@ -110,8 +110,8 @@ export default function AtmosphereDashboard({ activeLocation, squallAlert, setSq
         {/* Subtle CRT Noise overlay using radial gradient for glassmorphism */}
         <div className={`absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] ${isSquall ? 'from-transparent via-red-950/30 to-red-950/80' : 'from-transparent via-zinc-950/20 to-zinc-950/80'} z-0`}></div>
 
-        {/* Left Side: Score & Target (Col span 5) */}
-        <div className={`col-span-5 flex flex-col justify-center border-r ${isSquall ? 'border-red-950 pr-4' : 'border-zinc-850 pr-4'} z-10`}>
+        {/* Left Side: Score & Target */}
+        <div className={`w-full md:w-5/12 flex flex-col justify-center border-b md:border-b-0 md:border-r pb-3 md:pb-0 ${isSquall ? 'border-red-950 md:pr-4' : 'border-zinc-850 md:pr-4'} z-10`}>
           {isSquall ? (
              <div className="flex flex-col justify-center h-full">
                <motion.div 
@@ -130,7 +130,7 @@ export default function AtmosphereDashboard({ activeLocation, squallAlert, setSq
              </div>
           ) : (
             <div className="flex flex-col justify-center">
-              <div className="text-zinc-500 font-mono text-[0.6rem] uppercase tracking-widest mb-1.5 flex items-center gap-1.5">
+              <div className="text-zinc-500 font-mono text-[0.55rem] md:text-xs uppercase tracking-widest mb-1.5 flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 bg-zinc-650 rounded-full" />
                 <span>BITE FORECAST INDEX</span>
               </div>
@@ -139,12 +139,12 @@ export default function AtmosphereDashboard({ activeLocation, squallAlert, setSq
                   initial={{ scale: 0.8, filter: 'blur(4px)' }}
                   animate={{ scale: 1, filter: 'blur(0px)' }}
                   transition={{ type: "spring", stiffness: 200, damping: 15 }}
-                  className={`w-14 h-14 rounded-full border-2 flex items-center justify-center text-2xl font-black tracking-tighter font-mono ${biteScoreData.status.color} ${biteScoreData.status.color.includes('emerald') ? 'border-emerald-500/30 bg-emerald-500/5 glow-emerald' : biteScoreData.status.color.includes('amber') ? 'border-amber-500/30 bg-amber-500/5 shadow-[0_0_10px_rgba(245,158,11,0.1)]' : 'border-zinc-800 bg-zinc-900/50'}`}
+                  className={`w-12 h-12 md:w-14 md:h-14 rounded-full border-2 flex items-center justify-center text-xl md:text-2xl font-black tracking-tighter font-mono ${biteScoreData.status.color} ${biteScoreData.status.color.includes('emerald') ? 'border-emerald-500/30 bg-emerald-500/5 glow-emerald' : biteScoreData.status.color.includes('amber') ? 'border-amber-500/30 bg-amber-500/5 shadow-[0_0_10px_rgba(245,158,11,0.1)]' : 'border-zinc-800 bg-zinc-900/50'}`}
                 >
                   {biteScoreData.score}
                 </motion.div>
                 <div>
-                  <div className={`font-mono text-xs font-extrabold uppercase tracking-widest ${biteScoreData.status.color}`}>
+                  <div className={`font-mono text-[0.65rem] md:text-xs font-extrabold uppercase tracking-widest ${biteScoreData.status.color}`}>
                     {biteScoreData.status.text}
                   </div>
                   <div className="text-zinc-500 font-mono text-[0.55rem] uppercase tracking-wider mt-0.5">
@@ -166,8 +166,8 @@ export default function AtmosphereDashboard({ activeLocation, squallAlert, setSq
           )}
         </div>
 
-        {/* Middle: Lure Matrix OR Squall Details (Col span 4) */}
-        <div className={`col-span-4 flex flex-col justify-center border-r ${isSquall ? 'border-red-950 pr-4' : 'border-zinc-850 pr-4'} z-10`}>
+        {/* Middle: Lure Matrix OR Squall Details */}
+        <div className={`w-full md:w-4/12 flex flex-col justify-center border-b md:border-b-0 md:border-r pb-3 md:pb-0 ${isSquall ? 'border-red-950 md:pr-4' : 'border-zinc-850 md:pr-4'} z-10`}>
           {isSquall ? (
             <div className="h-full overflow-y-auto pr-2 scrollbar-hide">
               <div className="text-red-400 font-mono text-[0.6rem] mb-1 tracking-widest uppercase font-bold">CRITICAL BULLETIN</div>
@@ -185,7 +185,7 @@ export default function AtmosphereDashboard({ activeLocation, squallAlert, setSq
             </div>
           ) : (
             <div className="flex flex-col justify-center">
-              <div className="text-zinc-500 font-mono text-[0.6rem] uppercase tracking-widest mb-1.5 flex items-center gap-1.5">
+              <div className="text-zinc-500 font-mono text-[0.55rem] md:text-xs uppercase tracking-widest mb-1.5 flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 bg-zinc-650 rounded-full" />
                 <span>TACTICAL LOADOUT</span>
               </div>
@@ -210,8 +210,8 @@ export default function AtmosphereDashboard({ activeLocation, squallAlert, setSq
           )}
         </div>
 
-        {/* Right Side: Metrics Grid (Col span 3) */}
-        <div className="col-span-3 flex flex-wrap justify-between gap-2 z-10">
+        {/* Right Side: Metrics Grid */}
+        <div className="w-full md:w-3/12 grid grid-cols-2 md:grid-cols-1 gap-2 z-10">
           {/* Temperature */}
           <div className={`flex items-center justify-between ${isSquall ? 'bg-red-950/30 border-red-900/50' : 'bg-zinc-950/60 border-zinc-850 hover:border-zinc-700/50'} px-2 py-1 border rounded-sm transition-colors duration-200`}>
             <div className="flex items-center gap-1">
