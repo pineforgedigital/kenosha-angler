@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AlertTriangle } from 'lucide-react';
+import { Analytics } from '@vercel/analytics/react';
 import SearchPanel from './components/SearchPanel';
 import AtmosphereDashboard from './components/AtmosphereDashboard';
 import RadarMap from './components/RadarMap';
@@ -20,6 +21,7 @@ function App() {
 
   return (
     <div className="h-[100dvh] w-full overflow-hidden bg-zinc-950 text-slate-50 flex flex-col scanlines">
+      <Analytics />
       {/* Top Header Bar */}
       <header className="w-[95%] max-w-[500px] mx-auto bg-zinc-950 border-b border-zinc-900/80 px-4 pb-2 pt-[calc(env(safe-area-inset-top,0px)+8px)] flex items-center justify-between z-50 shrink-0 font-mono">
         <div className="flex items-center gap-3">
