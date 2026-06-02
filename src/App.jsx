@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AlertTriangle } from 'lucide-react';
+import { Analytics } from '@vercel/analytics/react';
 import SearchPanel from './components/SearchPanel';
 import AtmosphereDashboard from './components/AtmosphereDashboard';
 import RadarMap from './components/RadarMap';
@@ -52,7 +53,7 @@ function App() {
               <span>EMERGENCY OVERRIDE: {squallAlert.properties.event.toUpperCase()} IN EFFECT IN SECTOR</span>
             </div>
           )}
-          <RadarMap activeLocation={activeLocation} squallAlert={squallAlert} />
+          <RadarMap activeLocation={activeLocation} setActiveLocation={setActiveLocation} squallAlert={squallAlert} />
           <div className="absolute bottom-3.5 left-4 z-[90] text-[0.5rem] md:text-[0.55rem] tracking-[0.18em] text-zinc-500 font-mono select-none pointer-events-none uppercase bg-zinc-950/70 backdrop-blur-sm border border-zinc-900 px-2 py-0.5 rounded-sm shadow-[0_2px_8px_rgba(0,0,0,0.4)]">
             DESIGNED & BUILT BY PINE FORGE DIGITAL LLC
           </div>
@@ -65,6 +66,7 @@ function App() {
           />
         </div>
       </div>
+      <Analytics />
     </div>
   );
 }

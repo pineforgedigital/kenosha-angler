@@ -1,14 +1,19 @@
 import React, { useRef, useEffect, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
-import { Radar } from 'lucide-react';
+import { Radar, Navigation, AlertCircle } from 'lucide-react';
+import { useGeolocation } from '../hooks/useGeolocation';
 
-export default function RadarMap({ activeLocation, squallAlert }) {
+const KENOSHA_BOUNDS = [-88.2, 42.4, -87.5, 42.7];
+
+export default function RadarMap({ activeLocation, setActiveLocation, squallAlert }) {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const marker = useRef(null);
   const [isRadarActive, setIsRadarActive] = useState(false);
   const [radarFrames, setRadarFrames] = useState([]);
   const animationTimer = useRef(null);
+
+  const { location: userLocation, error: geoError, isLocating } = useGeolocation();
 
   // Auto-activate radar when squall alert triggers
   useEffect(() => {
@@ -29,7 +34,8 @@ export default function RadarMap({ activeLocation, squallAlert }) {
     for (let i = 4; i >= 0; i--) {
       const d = new Date(now.getTime() - i * 5 * 60000);
       const timeStr = d.toISOString();
-      const url = `https://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0q.cgi?service=WMS&version=1.1.1&request=GetMap&layers=nexrad-n0q-900913&format=image/png&transparent=true&srs=EPSG:3857&width=256&height=256&bbox={bbox-epsg-3857}&time=${timeStr}`;
+      const baseUrl = import.meta.env.VITE_RADAR_WMS_URL || 'https://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0q.cgi';
+      const url = `${baseUrl}?service=WMS&version=1.1.1&request=GetMap&layers=nexrad-n0q-900913&format=image/png&transparent=true&srs=EPSG:3857&width=256&height=256&bbox={bbox-epsg-3857}&time=${timeStr}`;
       frames.push(url);
     }
     setRadarFrames(frames);
@@ -82,6 +88,64 @@ export default function RadarMap({ activeLocation, squallAlert }) {
       if (map.current.getLayer('background')) {
         map.current.setPaintProperty('background', 'background-color', '#1c1c1e');
       }
+
+      // Action 1: The WMS Bathymetry Injection
+      if (!map.current.getSource('bathymetry-source')) {
+        map.current.addSource('bathymetry-source', {
+          type: 'raster',
+          tiles: ['https://dnrmaps.wi.gov/arcgis/services/DW_Surface_Water_Viewer/MapServer/WmsServer?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&LAYERS=Bathymetry&FORMAT=image/png&TRANSPARENT=TRUE&STYLES=&CRS=EPSG:3857&WIDTH=256&HEIGHT=256&BBOX={bbox-epsg-3857}'],
+          tileSize: 256,
+          bounds: KENOSHA_BOUNDS
+        });
+      }
+
+      if (!map.current.getLayer('bathymetry-layer')) {
+        map.current.addLayer({
+          id: 'bathymetry-layer',
+          type: 'raster',
+          source: 'bathymetry-source',
+          paint: {
+            'raster-opacity': 0.75
+          }
+        }, 'water'); // Add below labels if possible, or above water
+      }
+    });
+
+    // Action 2: The Dynamic WBIC Lookup
+    map.current.on('click', async (e) => {
+      const { lat, lng } = e.lngLat;
+      
+      try {
+        // Construct ArcGIS REST API Identify URL for the DW_Surface_Water_Viewer
+        // Using identify is generally much more reliable for finding features by click than WMS GetFeatureInfo.
+        const url = `https://dnrmaps.wi.gov/arcgis/rest/services/DW_Surface_Water_Viewer/MapServer/identify?geometryType=esriGeometryPoint&geometry=${lng},${lat}&sr=4326&tolerance=3&mapExtent=${lng-0.1},${lat-0.1},${lng+0.1},${lat+0.1}&imageDisplay=800,600,96&returnGeometry=false&f=json`;
+        
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (data && data.results && data.results.length > 0) {
+          // Find the first result that has WATERBODY_WBIC or WBIC
+          const result = data.results.find(r => r.attributes && (r.attributes.WATERBODY_WBIC || r.attributes.WBIC || r.attributes.WATERBODY_NAME));
+          
+          if (result && result.attributes) {
+            const wbic = result.attributes.WATERBODY_WBIC || result.attributes.WBIC || 'UNKNOWN';
+            const name = result.attributes.WATERBODY_NAME || result.attributes.OFFICIAL_NAME || result.attributes.LAKE_NAME || `Lake ${wbic}`;
+            
+            if (wbic && wbic !== 'Null' && setActiveLocation) {
+              // Update activeLocation state to trigger weather fetch and header update
+              setActiveLocation({
+                id: `wbic-${wbic}`,
+                name: name,
+                lat: lat,
+                lon: lng,
+                wbic: wbic
+              });
+            }
+          }
+        }
+      } catch (err) {
+        console.error("DNR WBIC Fetch Error:", err);
+      }
     });
 
     // Custom tactical marker
@@ -132,7 +196,10 @@ export default function RadarMap({ activeLocation, squallAlert }) {
           map.current.addSource(sourceId, {
             type: 'raster',
             tiles: [frameUrl],
-            tileSize: 256
+            tileSize: 256,
+            bounds: KENOSHA_BOUNDS,
+            minzoom: 6,
+            maxzoom: 13
           });
         }
 
@@ -245,10 +312,39 @@ export default function RadarMap({ activeLocation, squallAlert }) {
     }
   }, [squallAlert]);
 
+  const handleLocateMe = () => {
+    if (userLocation && map.current) {
+      map.current.flyTo({
+        center: [userLocation.lon, userLocation.lat],
+        zoom: 14.5,
+        essential: true
+      });
+    }
+  };
+
   return (
     <div className="relative w-full h-full z-[0]">
       <div ref={mapContainer} className="w-full h-full" />
       
+      {geoError && (
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 bg-red-950/90 border border-red-500/50 text-red-200 px-3 py-1.5 rounded-sm flex items-center gap-2 text-xs font-mono shadow-lg backdrop-blur-sm">
+          <AlertCircle size={14} className="text-red-400" />
+          <span>{geoError}</span>
+        </div>
+      )}
+
+      {/* Locate Me Button */}
+      <button
+        onClick={handleLocateMe}
+        disabled={!userLocation || isLocating}
+        className={`fixed bottom-40 right-4 z-40 p-3 bg-zinc-900/90 backdrop-blur-md border ${
+          userLocation ? 'border-sky-500/50 hover:border-sky-400 text-sky-400' : 'border-zinc-800 text-zinc-600'
+        } rounded-md transition-colors duration-300 focus:outline-none flex items-center justify-center`}
+        aria-label="Locate Me"
+      >
+        <Navigation className={isLocating ? 'animate-pulse' : ''} size={24} />
+      </button>
+
       {/* Tactical UI Toggle */}
       <button
         onClick={() => setIsRadarActive(!isRadarActive)}

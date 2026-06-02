@@ -5,6 +5,8 @@ import MarineDashboard from './MarineDashboard';
 import CatchLog from './CatchLog';
 import SpotGuide from './SpotGuide';
 import SolunarDashboard from './SolunarDashboard';
+import MeteorologyHub from './MeteorologyHub';
+import ComplianceVault from './ComplianceVault';
 
 export default function BottomSheet({ activeModule, setActiveModule, activeLocation, setActiveLocation }) {
   const dragControls = useDragControls();
@@ -13,6 +15,10 @@ export default function BottomSheet({ activeModule, setActiveModule, activeLocat
     switch (activeModule) {
       case 'marine':
         return 'MARINE DASHBOARD INITIALIZING...';
+      case 'vault':
+        return 'COMPLIANCE VAULT INITIALIZING...';
+      case 'meteo':
+        return 'METEOROLOGY HUB INITIALIZING...';
       case 'spots':
         return 'SPOTS DIRECTORY INITIALIZING...';
       case 'log':
@@ -78,8 +84,12 @@ export default function BottomSheet({ activeModule, setActiveModule, activeLocat
 
           {/* Sheet Content */}
           <div className="flex-1 overflow-y-auto font-mono pb-32">
-            {activeModule === 'marine' ? (
+            {activeModule === 'vault' ? (
+              <ComplianceVault />
+            ) : activeModule === 'marine' ? (
               <MarineDashboard activeLocation={activeLocation} />
+            ) : activeModule === 'meteo' ? (
+              <MeteorologyHub activeLocation={activeLocation} setActiveLocation={setActiveLocation} />
             ) : activeModule === 'log' ? (
               <CatchLog activeLocation={activeLocation} />
             ) : activeModule === 'spots' ? (

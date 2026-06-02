@@ -266,3 +266,61 @@ export function calculateUpwellingDepth(windSpeed, windDegree, currentMonth) {
       : "NEUTRAL PROFILE: Thermocline stable near baseline depths."
   };
 }
+
+export async function geocodeSearch(query) {
+  try {
+    const apiKey = import.meta.env.VITE_OPENWEATHER_KEY;
+    if (!apiKey) throw new Error("Missing VITE_OPENWEATHER_KEY");
+
+    let url = "";
+    if (/^\d{5}$/.test(query)) {
+      url = `https://api.openweathermap.org/geo/1.0/zip?zip=${query},US&appid=${apiKey}`;
+    } else {
+      url = `https://api.openweathermap.org/geo/1.0/direct?q=${query},US&limit=1&appid=${apiKey}`;
+    }
+
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("Geocoding failed");
+    
+    let data = await res.json();
+    if (Array.isArray(data)) {
+      data = data[0]; // direct returns array
+    }
+
+    if (!data || (!data.lat && !data.lon)) return null;
+
+    return {
+      id: `custom-${data.lat}-${data.lon}`,
+      name: data.name || query,
+      lat: data.lat,
+      lon: data.lon
+    };
+  } catch (err) {
+    console.error("geocodeSearch error:", err);
+    return null;
+  }
+}
+
+export async function fetchHourlyForecast(lat, lon) {
+  try {
+    const apiKey = import.meta.env.VITE_OPENWEATHER_KEY;
+    if (!apiKey) throw new Error("Missing VITE_OPENWEATHER_KEY");
+    
+    const res = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=imperial`);
+    if (!res.ok) throw new Error("Failed to fetch hourly forecast");
+    
+    const data = await res.json();
+    if (!data.list) return [];
+    
+    // We want the next 48 hours. The 5-day/3-hour forecast returns 40 items. 16 items = 48 hours.
+    return data.list.slice(0, 16).map(item => ({
+      dt: item.dt,
+      temp: item.main.temp,
+      icon: item.weather[0]?.icon,
+      pop: item.pop
+    }));
+  } catch (err) {
+    console.error("fetchHourlyForecast error:", err);
+    return [];
+  }
+}

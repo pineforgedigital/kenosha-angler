@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Waves, MapPin, BookOpen, Moon } from 'lucide-react';
+import { Waves, MapPin, BookOpen, Moon, CloudLightning, Shield } from 'lucide-react';
 
 export default function TacticalHUD({ activeModule, setActiveModule }) {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
@@ -18,6 +18,8 @@ export default function TacticalHUD({ activeModule, setActiveModule }) {
   }, []);
 
   const navItems = [
+    { id: 'vault', label: 'Vault', icon: Shield },
+    { id: 'meteo', label: 'Meteo', icon: CloudLightning },
     { id: 'marine', label: 'Marine', icon: Waves },
     { id: 'spots', label: 'Spots', icon: MapPin },
     { id: 'log', label: 'Log', icon: BookOpen },
