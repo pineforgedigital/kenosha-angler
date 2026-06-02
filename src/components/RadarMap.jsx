@@ -9,6 +9,7 @@ export default function RadarMap({ activeLocation, setActiveLocation, squallAler
   const mapContainer = useRef(null);
   const map = useRef(null);
   const marker = useRef(null);
+  const userMarkerRef = useRef(null);
   const [isRadarActive, setIsRadarActive] = useState(false);
   const [radarFrames, setRadarFrames] = useState([]);
   const animationTimer = useRef(null);
@@ -54,10 +55,10 @@ export default function RadarMap({ activeLocation, setActiveLocation, squallAler
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/dark-v11',
+      style: 'mapbox://styles/mapbox/satellite-streets-v12',
       center: [activeLocation.lon, activeLocation.lat],
       zoom: 14.5,
-      pitch: 75,
+      pitch: 0,
       bearing: 0
     });
 
@@ -174,7 +175,7 @@ export default function RadarMap({ activeLocation, setActiveLocation, squallAler
     map.current.flyTo({
       center: [activeLocation.lon, activeLocation.lat],
       zoom: 14.5,
-      pitch: 75,
+      pitch: 0,
       essential: true
     });
     if (marker.current) {
@@ -311,6 +312,21 @@ export default function RadarMap({ activeLocation, setActiveLocation, squallAler
       map.current.once('idle', drawPolygon);
     }
   }, [squallAlert]);
+
+  // Live Tracking Marker
+  useEffect(() => {
+    if (!map.current || !userLocation) return;
+    
+    if (!userMarkerRef.current) {
+      const el = document.createElement('div');
+      el.className = 'user-location-dot';
+      userMarkerRef.current = new mapboxgl.Marker(el)
+        .setLngLat([userLocation.lon, userLocation.lat])
+        .addTo(map.current);
+    } else {
+      userMarkerRef.current.setLngLat([userLocation.lon, userLocation.lat]);
+    }
+  }, [userLocation]);
 
   const handleLocateMe = () => {
     if (userLocation && map.current) {
