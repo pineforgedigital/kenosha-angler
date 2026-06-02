@@ -107,3 +107,17 @@
   0% { transform: scale(0.8); opacity: 0.5; }
   100% { transform: scale(2.5); opacity: 0; }
 }
+
+/* Buoy Marker */
+.buoy-marker {
+  background-color: #18181b; /* zinc-900 */
+  border: 1px solid #f97316; /* neon orange */
+  color: #f97316;
+  border-radius: 9999px;
+  padding: 2px 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: bold;
+  box-shadow: 0 0 10px rgba(249, 115, 22, 0.4);
+  white-space: nowrap;
+}

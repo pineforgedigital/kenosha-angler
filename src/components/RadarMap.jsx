@@ -1,7 +1,8 @@
 import React, { useRef, useEffect, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
-import { Radar, Navigation, AlertCircle } from 'lucide-react';
+import { Radar, Navigation, AlertCircle, Radio, Loader2 } from 'lucide-react';
 import { useGeolocation } from '../hooks/useGeolocation';
+import { fetchLiveBuoys } from '../utils/buoyEngine';
 
 const KENOSHA_BOUNDS = [-88.2, 42.4, -87.5, 42.7];
 
@@ -10,7 +11,12 @@ export default function RadarMap({ activeLocation, setActiveLocation, squallAler
   const map = useRef(null);
   const marker = useRef(null);
   const userMarkerRef = useRef(null);
+  const buoyMarkersRef = useRef([]);
   const [isRadarActive, setIsRadarActive] = useState(false);
+  const [showBuoys, setShowBuoys] = useState(false);
+  const [buoyData, setBuoyData] = useState([]);
+  const [isFetchingBuoys, setIsFetchingBuoys] = useState(false);
+  const [isMapLoaded, setIsMapLoaded] = useState(false);
   const [radarFrames, setRadarFrames] = useState([]);
   const animationTimer = useRef(null);
 
@@ -61,6 +67,8 @@ export default function RadarMap({ activeLocation, setActiveLocation, squallAler
       pitch: 0,
       bearing: 0
     });
+
+    map.current.on('load', () => setIsMapLoaded(true));
 
     map.current.on('style.load', () => {
       // Terrain & Sky
@@ -313,9 +321,49 @@ export default function RadarMap({ activeLocation, setActiveLocation, squallAler
     }
   }, [squallAlert]);
 
+  // Live Buoy Fetching & Markers
+  useEffect(() => {
+    async function loadBuoys() {
+      if (showBuoys && buoyData.length === 0) {
+        setIsFetchingBuoys(true);
+        const data = await fetchLiveBuoys();
+        setBuoyData(data);
+        setIsFetchingBuoys(false);
+      }
+    }
+    loadBuoys();
+  }, [showBuoys]); // Omitting buoyData to prevent infinite loop
+
+  useEffect(() => {
+    if (!map.current || !isMapLoaded) return;
+
+    // Cleanup existing markers
+    buoyMarkersRef.current.forEach(marker => marker.remove());
+    buoyMarkersRef.current = [];
+
+    if (showBuoys && buoyData.length > 0) {
+      buoyData.forEach(buoy => {
+        const el = document.createElement('div');
+        el.className = 'buoy-marker';
+        el.textContent = `${buoy.tempF}°F`;
+        
+        const m = new mapboxgl.Marker(el)
+          .setLngLat([buoy.lng, buoy.lat])
+          .addTo(map.current);
+          
+        buoyMarkersRef.current.push(m);
+      });
+    }
+
+    return () => {
+      buoyMarkersRef.current.forEach(marker => marker.remove());
+      buoyMarkersRef.current = [];
+    };
+  }, [showBuoys, buoyData, isMapLoaded]);
+
   // Live Tracking Marker
   useEffect(() => {
-    if (!map.current || !userLocation) return;
+    if (!map.current || !userLocation || !isMapLoaded) return;
     
     if (!userMarkerRef.current) {
       const el = document.createElement('div');
@@ -326,7 +374,7 @@ export default function RadarMap({ activeLocation, setActiveLocation, squallAler
     } else {
       userMarkerRef.current.setLngLat([userLocation.lon, userLocation.lat]);
     }
-  }, [userLocation]);
+  }, [userLocation, isMapLoaded]);
 
   const handleLocateMe = () => {
     if (userLocation && map.current) {
@@ -370,6 +418,28 @@ export default function RadarMap({ activeLocation, setActiveLocation, squallAler
         aria-label="Toggle Radar"
       >
         <Radar className={isRadarActive ? 'text-emerald-400 animate-spin' : 'text-zinc-500'} size={24} />
+      </button>
+
+      {/* Live Buoys Toggle */}
+      <button
+        onClick={() => setShowBuoys(!showBuoys)}
+        disabled={isFetchingBuoys}
+        className={`fixed bottom-8 right-4 z-40 p-3 bg-zinc-900/90 backdrop-blur-md border ${
+          showBuoys ? 'border-orange-500 text-orange-400' : 'border-zinc-800 text-zinc-500'
+        } rounded-md transition-colors duration-300 focus:outline-none flex items-center justify-center gap-2 font-mono text-[0.6rem] tracking-widest font-bold uppercase`}
+        aria-label="Toggle Live Buoys"
+      >
+        {isFetchingBuoys ? (
+          <>
+            <Loader2 className="animate-spin" size={16} />
+            <span>SYNCING...</span>
+          </>
+        ) : (
+          <>
+            <Radio className={showBuoys ? 'animate-pulse text-orange-400' : 'text-zinc-500'} size={16} />
+            <span className="hidden md:inline">LIVE BUOYS</span>
+          </>
+        )}
       </button>
     </div>
   );
