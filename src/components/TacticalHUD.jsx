@@ -35,7 +35,6 @@ export default function TacticalHUD({ activeModule, setActiveModule }) {
   };
 
   return (
-  return (
     <div className="fixed bottom-0 left-0 w-full z-[120] bg-zinc-950/90 backdrop-blur-xl border-t border-zinc-850 shadow-[0_-12px_40px_rgba(0,0,0,0.7)]">
       <div className="w-full flex justify-around items-center px-2 py-3 pb-6 md:pb-4 transition-all duration-300">
         {navItems.map((item) => {
