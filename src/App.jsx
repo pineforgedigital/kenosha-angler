@@ -71,14 +71,14 @@ function App() {
           {/* The Map layer is hidden via CSS rather than unmounted to save bandwidth and reload times */}
           <div className={`absolute inset-0 z-0 transition-opacity duration-300 ${isMapVisible ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
             <RadarMap activeLocation={activeLocation} setActiveLocation={setActiveLocation} squallAlert={squallAlert} />
-            <div className="absolute bottom-3.5 left-4 z-[90] text-[0.5rem] md:text-[0.55rem] tracking-[0.18em] text-zinc-500 font-mono select-none pointer-events-none uppercase bg-zinc-950/70 backdrop-blur-sm border border-zinc-900 px-2 py-0.5 rounded-sm shadow-[0_2px_8px_rgba(0,0,0,0.4)]">
+            <div className="absolute bottom-24 left-4 z-[90] text-[0.5rem] md:text-[0.55rem] tracking-[0.18em] text-zinc-500 font-mono select-none pointer-events-none uppercase bg-zinc-950/70 backdrop-blur-sm border border-zinc-900 px-2 py-0.5 rounded-sm shadow-[0_2px_8px_rgba(0,0,0,0.4)]">
               DESIGNED & BUILT BY PINE FORGE DIGITAL LLC
             </div>
           </div>
 
           {/* Render blank space placeholder if map is off and no module is open */}
           {!isMapVisible && !activeModule && (
-            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center text-center p-8 bg-zinc-950">
+            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center text-center p-8 pb-32 bg-zinc-950">
               <Map size={48} className="text-zinc-800 mb-4" />
               <h2 className="text-zinc-500 font-mono text-sm tracking-widest uppercase font-bold">Map Engine Disabled</h2>
               <p className="text-zinc-600 text-xs mt-2 max-w-[250px]">Select a tactical module below or toggle the map back on to view telemetry.</p>
