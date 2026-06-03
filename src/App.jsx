@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, Map } from 'lucide-react';
 import { Analytics } from '@vercel/analytics/react';
 import SearchPanel from './components/SearchPanel';
 import AtmosphereDashboard from './components/AtmosphereDashboard';
@@ -12,6 +12,7 @@ function App() {
   const [activeLocation, setActiveLocation] = useState(lakeDirectory[0]);
   const [squallAlert, setSquallAlert] = useState(null);
   const [activeModule, setActiveModule] = useState(null);
+  const [isMapVisible, setIsMapVisible] = useState(true);
 
   useEffect(() => {
     document.title = activeLocation 
@@ -35,9 +36,23 @@ function App() {
             <p className="hidden md:block text-[0.55rem] text-zinc-500 tracking-wider">TACTICAL WEATHER & LAKE TELEMETRY</p>
           </div>
         </div>
-        <div className="text-right">
-          <div className="text-zinc-500 text-[0.55rem] tracking-wider">SYSTEM STATUS</div>
-          <div className="text-emerald-400 text-[0.6rem] font-bold tracking-widest uppercase animate-pulse">SENSORS ONLINE</div>
+        <div className="flex items-center gap-4">
+          <div className="text-right hidden sm:block">
+            <div className="text-zinc-500 text-[0.55rem] tracking-wider">SYSTEM STATUS</div>
+            <div className="text-emerald-400 text-[0.6rem] font-bold tracking-widest uppercase animate-pulse">SENSORS ONLINE</div>
+          </div>
+          
+          <button 
+            onClick={() => setIsMapVisible(!isMapVisible)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-sm font-bold text-[0.6rem] tracking-widest uppercase transition-all ${
+              isMapVisible 
+                ? 'bg-emerald-950/50 text-emerald-400 border border-emerald-500/30 shadow-[0_0_8px_rgba(16,185,129,0.2)]' 
+                : 'bg-zinc-900 text-zinc-400 border border-zinc-700 hover:text-slate-200'
+            }`}
+          >
+            <Map size={12} className={isMapVisible ? 'animate-pulse' : ''} />
+            <span>MAP {isMapVisible ? 'ON' : 'OFF'}</span>
+          </button>
         </div>
       </header>
 
@@ -53,16 +68,31 @@ function App() {
               <span>EMERGENCY OVERRIDE: {squallAlert.properties.event.toUpperCase()} IN EFFECT IN SECTOR</span>
             </div>
           )}
-          <RadarMap activeLocation={activeLocation} setActiveLocation={setActiveLocation} squallAlert={squallAlert} />
-          <div className="absolute bottom-3.5 left-4 z-[90] text-[0.5rem] md:text-[0.55rem] tracking-[0.18em] text-zinc-500 font-mono select-none pointer-events-none uppercase bg-zinc-950/70 backdrop-blur-sm border border-zinc-900 px-2 py-0.5 rounded-sm shadow-[0_2px_8px_rgba(0,0,0,0.4)]">
-            DESIGNED & BUILT BY PINE FORGE DIGITAL LLC
+          {/* The Map layer is hidden via CSS rather than unmounted to save bandwidth and reload times */}
+          <div className={`absolute inset-0 z-0 transition-opacity duration-300 ${isMapVisible ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+            <RadarMap activeLocation={activeLocation} setActiveLocation={setActiveLocation} squallAlert={squallAlert} />
+            <div className="absolute bottom-3.5 left-4 z-[90] text-[0.5rem] md:text-[0.55rem] tracking-[0.18em] text-zinc-500 font-mono select-none pointer-events-none uppercase bg-zinc-950/70 backdrop-blur-sm border border-zinc-900 px-2 py-0.5 rounded-sm shadow-[0_2px_8px_rgba(0,0,0,0.4)]">
+              DESIGNED & BUILT BY PINE FORGE DIGITAL LLC
+            </div>
           </div>
+
+          {/* Render blank space placeholder if map is off and no module is open */}
+          {!isMapVisible && !activeModule && (
+            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center text-center p-8 bg-zinc-950">
+              <Map size={48} className="text-zinc-800 mb-4" />
+              <h2 className="text-zinc-500 font-mono text-sm tracking-widest uppercase font-bold">Map Engine Disabled</h2>
+              <p className="text-zinc-600 text-xs mt-2 max-w-[250px]">Select a tactical module below or toggle the map back on to view telemetry.</p>
+            </div>
+          )}
+
           <TacticalHUD activeModule={activeModule} setActiveModule={setActiveModule} />
+          
           <BottomSheet 
             activeModule={activeModule} 
             setActiveModule={setActiveModule} 
             activeLocation={activeLocation} 
             setActiveLocation={setActiveLocation} 
+            isMapVisible={isMapVisible}
           />
         </div>
       </div>

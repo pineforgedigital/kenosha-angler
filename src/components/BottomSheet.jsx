@@ -8,7 +8,7 @@ import SolunarDashboard from './SolunarDashboard';
 import MeteorologyHub from './MeteorologyHub';
 import ComplianceVault from './ComplianceVault';
 
-export default function BottomSheet({ activeModule, setActiveModule, activeLocation, setActiveLocation }) {
+export default function BottomSheet({ activeModule, setActiveModule, activeLocation, setActiveLocation, isMapVisible = true }) {
   const dragControls = useDragControls();
 
   const getPlaceholderText = () => {
@@ -38,18 +38,22 @@ export default function BottomSheet({ activeModule, setActiveModule, activeLocat
           animate={{ y: 0 }}
           exit={{ y: '100%' }}
           transition={{ type: 'spring', damping: 25, stiffness: 220 }}
-          drag="y"
-          dragControls={dragControls}
+          drag={isMapVisible ? "y" : false}
+          dragControls={isMapVisible ? dragControls : undefined}
           dragListener={false}
           dragConstraints={{ top: 0, bottom: 9999 }}
           dragElastic={0.05}
           dragMomentum={false}
           onDragEnd={(event, info) => {
-            if (info.offset.y > 300 || info.velocity.y > 800) {
+            if (isMapVisible && (info.offset.y > 300 || info.velocity.y > 800)) {
               setActiveModule(null);
             }
           }}
-          className="h-[92vh] w-full fixed bottom-0 left-0 right-0 z-[100] bg-zinc-950/90 backdrop-blur-2xl border-t border-zinc-850 rounded-t-2xl shadow-[0_-12px_45px_rgba(0,0,0,0.8)] flex flex-col overflow-hidden"
+          className={`w-full z-[100] flex flex-col overflow-hidden transition-all duration-500 ${
+            isMapVisible 
+              ? 'fixed bottom-0 h-[92vh] bg-zinc-950/90 backdrop-blur-2xl border-t border-zinc-850 rounded-t-2xl shadow-[0_-12px_45px_rgba(0,0,0,0.8)]'
+              : 'absolute inset-0 h-full bg-zinc-950 border-none rounded-none pb-[90px]'
+          }`}
         >
           {/* Sticky Header & Drag zone */}
           <div 
@@ -64,8 +68,8 @@ export default function BottomSheet({ activeModule, setActiveModule, activeLocat
               </span>
             </div>
 
-            {/* Centered Drag Handle */}
-            <div className="flex-1 flex justify-center pointer-events-none">
+            {/* Centered Drag Handle (hidden in full-screen mode) */}
+            <div className={`flex-1 flex justify-center pointer-events-none transition-opacity ${isMapVisible ? 'opacity-100' : 'opacity-0'}`}>
               <div className="w-12 h-1.5 bg-zinc-800 rounded-full opacity-60" />
             </div>
 
