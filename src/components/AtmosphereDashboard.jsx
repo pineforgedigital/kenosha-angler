@@ -3,7 +3,7 @@ import { fetchLakeWeather, calculateBiteScore, determineTargetSpecies, determine
 import { Thermometer, Wind, Gauge, Cloud, Crosshair, Anchor, AlertTriangle, ChevronDown, ChevronUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export default function AtmosphereDashboard({ activeLocation, squallAlert, setSquallAlert }) {
+export default function AtmosphereDashboard({ activeLocation, squallAlert, setSquallAlert, isMapVisible }) {
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -44,7 +44,7 @@ export default function AtmosphereDashboard({ activeLocation, squallAlert, setSq
 
   if (isLoading) {
     return (
-      <div className="flex-1 bg-zinc-900 border-b border-zinc-800 p-4 grid grid-cols-12 gap-4 overflow-hidden animate-pulse h-[180px]">
+      <div className={`flex-1 bg-zinc-900 border-b border-zinc-800 p-4 grid grid-cols-12 gap-4 overflow-hidden animate-pulse h-[180px] ${isMapVisible ? 'hidden' : ''}`}>
         {/* Left Side Skeleton */}
         <div className="col-span-5 flex flex-col justify-center border-r border-zinc-800/50 pr-4">
           <div className="bg-zinc-850 rounded h-3 w-1/3 mb-2" />
@@ -81,7 +81,7 @@ export default function AtmosphereDashboard({ activeLocation, squallAlert, setSq
 
   if (error) {
     return (
-      <div className="p-4 flex-1 flex items-center justify-center text-red-500 font-mono text-sm bg-zinc-950/80 backdrop-blur-md border-b border-zinc-800 h-[180px]">
+      <div className={`p-4 flex-1 flex items-center justify-center text-red-500 font-mono text-sm bg-zinc-950/80 backdrop-blur-md border-b border-zinc-800 h-[180px] ${isMapVisible ? 'hidden' : ''}`}>
         SENSOR FAILURE: {error}
       </div>
     );
@@ -106,7 +106,7 @@ export default function AtmosphereDashboard({ activeLocation, squallAlert, setSq
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 10 }}
         transition={{ duration: 0.3 }}
-        className="flex flex-col w-full flex-grow relative"
+        className={`flex flex-col w-full flex-grow relative ${isMapVisible ? 'hidden' : ''}`}
       >
         <div className={containerClasses}>
         {/* Subtle CRT Noise overlay using radial gradient for glassmorphism */}

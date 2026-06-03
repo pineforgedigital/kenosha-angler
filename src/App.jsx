@@ -59,7 +59,7 @@ function App() {
       <div className="flex-grow flex flex-col overflow-hidden relative">
         <div className="bg-zinc-900 border-b border-zinc-800 flex flex-col relative shrink-0">
           <SearchPanel activeLocation={activeLocation} setActiveLocation={setActiveLocation} />
-          <AtmosphereDashboard activeLocation={activeLocation} squallAlert={squallAlert} setSquallAlert={setSquallAlert} />
+          <AtmosphereDashboard activeLocation={activeLocation} squallAlert={squallAlert} setSquallAlert={setSquallAlert} isMapVisible={isMapVisible} />
         </div>
         <div className="flex-grow h-full relative min-h-0">
           {squallAlert && (
